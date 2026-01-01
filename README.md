@@ -18,4 +18,4 @@ No GUI, no credentials stored, minimal user interaction.
 
 Details: https://github.com/BadIDMan/service.wg.monitor/wiki
 
-Technical part for how to create NordVPN Access token and then extract Private Key from it is included in README.md file.
+Technical part for how to create NordVPN Access token and then extract Private Key from it is included in README-tech-details.md file.
