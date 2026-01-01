@@ -247,7 +247,7 @@ def fetch_nordvpn_values():
     cmd = (
         f'{CURL_BIN} -s '
         '"https://api.nordvpn.com/v1/servers/recommendations?'
-        '&filters\[servers_technologies\]\[identifier\]=wireguard_udp&limit=1" '
+        '&filters\\[servers_technologies\\]\\[identifier\\]=wireguard_udp&limit=1" '
         f'| {JQ_BIN} -r '
         "'.[]|.hostname, .station, "
         "(.locations|.[]|.country|.city.name), "
@@ -294,7 +294,7 @@ def create_wg_config():
 # Auto-generated WireGuard template for NordVPN
 #
 # run:
-# curl -s "https://api.nordvpn.com/v1/servers/recommendations?&filters\[servers_technologies\]\[identifier\]=wireguard_udp&limit=1" | jq -r '.[]|.hostname, .station, (.locations|.[]|.country|.city.name), (.locations|.[]|.country|.name), (.technologies|.[].metadata|.[].value), .load'
+# curl -s "https://api.nordvpn.com/v1/servers/recommendations?&filters\\[servers_technologies\\]\\[identifier\\]=wireguard_udp&limit=1" | jq -r '.[]|.hostname, .station, (.locations|.[]|.country|.city.name), (.locations|.[]|.country|.name), (.technologies|.[].metadata|.[].value), .load'
 #
 # output in line 1 is your <endpoint>
 # output in line 2 is your <vpn_ip>
@@ -533,7 +533,7 @@ class WGMonitor(xbmc.Monitor):
             log("WG_MONITOR: WG_OK", f"Tunnel active. VPN IP: {ip}")
 
             if not wg_ok_notified:
-                notify(f"WireGuard OK. VPN IP: {ip}", 15000)
+                notify(f"WG OK. VPN IP: {ip}", 10000)
                 wg_ok_notified = True
 
             time.sleep(CHECK_INTERVAL)
