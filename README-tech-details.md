@@ -10,5 +10,5 @@ curl -s -u token:<ACCESS_TOKEN> https://api.nordvpn.com/v1/users/services/creden
 To run these commands on Windows, curl and jq must be installed.
 They can be installed easily using:
 
-winget install curl
-winget install jq
+* winget install curl
+* winget install jq
