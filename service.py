@@ -419,6 +419,53 @@ def get_private_key():
 
 # ==========================================
 
+# ================= ENTWARE PACKAGES UPDATE CHECK =================
+def entware_update_packages():
+
+    # Ensure opkg exists
+    if not os.path.exists("/opt/bin/opkg"):
+        return
+
+    log("WG_MONITOR: ENTWARE", "Checking for Entware package updates")
+
+    # Refresh package lists
+    run("opkg update")
+
+    # Check if anything is upgradable
+    upgradable = run("opkg list-upgradable").strip()
+    if not upgradable:
+        return  # nothing to do
+
+    # Snapshot installed packages BEFORE upgrade
+    before = {}
+    for line in run("opkg list-installed").splitlines():
+        if " - " in line:
+            name, version = line.split(" - ", 1)
+            before[name.strip()] = version.strip()
+
+    # Perform upgrade (blocking call – returns only when finished)
+    run("opkg upgrade")
+
+    # Snapshot installed packages AFTER upgrade
+    after = {}
+    for line in run("opkg list-installed").splitlines():
+        if " - " in line:
+            name, version = line.split(" - ", 1)
+            after[name.strip()] = version.strip()
+
+    # Detect changes and log them
+    updated = False
+    for pkg, new_ver in after.items():
+        old_ver = before.get(pkg)
+        if old_ver and old_ver != new_ver:
+            log("WG_MONITOR: ENTWARE PKG UPDATE", f"{pkg} updated to: {new_ver}")
+            updated = True
+
+    if updated:
+        notify(f"Entware packages updated. Details in {LOG}", 10000)
+# ==========================================
+
+
 
 
 # ================= MAIN LOOP =================
@@ -442,6 +489,10 @@ class WGMonitor(xbmc.Monitor):
 
         if os.path.exists(WG_CONF):
             update_wg_config()
+
+        if entware_installed():
+            entware_update_packages()
+
 
         while not self.abortRequested():
 
@@ -533,7 +584,7 @@ class WGMonitor(xbmc.Monitor):
             log("WG_MONITOR: WG_OK", f"Tunnel active. VPN IP: {ip}")
 
             if not wg_ok_notified:
-                notify(f"WG OK. VPN IP: {ip}", 10000)
+                notify(f"WireGuard OK.VPN IP:{ip}", 10000)
                 wg_ok_notified = True
 
             time.sleep(CHECK_INTERVAL)
